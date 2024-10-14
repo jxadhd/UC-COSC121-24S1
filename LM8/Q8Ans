@@ -1,0 +1,45 @@
+"""A program to read a CSV file of rainfalls and print the totals
+   for each month.
+"""
+
+from os.path import isfile as is_valid_file
+
+def get_filename():
+    """Prompt the user to provide a csv file of rainfall data."""
+    filename = input('Input csv file name? ')
+    while not is_valid_file(filename):
+        print('File does not exist.')
+        filename = input('Input csv file name? ')
+    return filename
+
+def read_data(filename):
+    """Read and return the contents of the given file."""
+    with open(filename) as datafile:
+        return datafile.read().splitlines()
+
+def process_line(line):
+    """Process a line of data and return a (month, rainfall) tuple."""
+    columns = line.split(',')
+    month = int(columns[0])
+    num_days = int(columns[1])
+    total_rainfall = sum(float(col) for col in columns[2:2 + num_days])
+    return month, total_rainfall
+
+def process_data(data):
+    """Process the data and return a list of (month, rainfall) tuples."""
+    return [process_line(line) for line in data]
+
+def print_results(results):
+    """Print the monthly rainfall totals."""
+    print('Monthly rainfalls')
+    for month, total_rainfall in results:
+        print(f'Month {month:2}: {total_rainfall:.1f}')
+
+def main():
+    """The main function."""
+    filename = get_filename()
+    data = read_data(filename)
+    results = process_data(data)
+    print_results(results)
+
+main()
